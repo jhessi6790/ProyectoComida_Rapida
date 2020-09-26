@@ -1,0 +1,26 @@
+{
+  "name": "comidarapida",
+  "version": "1.0.0",
+  "description": "proyecto de seminario",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jhessi6790/ProyectoComida_Rapida.git"
+  },
+  "author": "karen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jhessi6790/ProyectoComida_Rapida/issues"
+  },
+  "homepage": "https://github.com/jhessi6790/ProyectoComida_Rapida#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "http-errors": "^1.8.0",
+    "mongoose": "^5.10.7",
+    "morgan": "^1.10.0"
+  }
+}
