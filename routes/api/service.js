@@ -104,4 +104,9 @@ function checkkeys (key) {
     }
     return false;
 }
+router.put("/", (req,res)=>{
+    var datos = rep.boy;
+    console.log(datos);
+
+});
 module.exports= router; 
