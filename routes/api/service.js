@@ -1,5 +1,6 @@
 const express = require('express');
 const RESTOBJ = require ('../../database/collection/restaurant');
+const CLIENT = require('../../database/collection/client');
 var REST = RESTOBJ.REST;
 var KEYS = RESTOBJ.keys;
 const empty = require ('is-empty');
@@ -109,4 +110,24 @@ router.put("/", (req,res)=>{
     console.log(datos);
 
 });
+router.post("/client", (req, res) => {
+    var client = req.body;
+    client["registerdate"] = new Date();
+    var cli = new CLIENT(client);
+    cli.save((err, docs)=> {
+      if(err){
+          var errors = err.errors;
+          var keys = Object.keys(errors);
+          var msn = {};
+          for(var i=0;i< keys.length;i++){
+              msn[keys[i]]=errors[keys[i]].message;
+          }
+          res.status(200).json(msn);
+          return;
+      }
+      res.status(200).json(docs);
+      return;
+    })
+  });
+
 module.exports= router; 
