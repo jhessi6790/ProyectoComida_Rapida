@@ -11,11 +11,7 @@ const clientSchema = {
       message: props => `${props.value} no es correcto` 
     } 
     },
-  password: {
-    type: String,
-    required: [true, "password requerido"],
-    min: [8, "la contraseña debe tener minimo 8 caracteres"]
-  },
+  password: String,
   phone: String,
   ci: String,
   registerdate: Date,

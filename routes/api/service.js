@@ -1,11 +1,14 @@
 const express = require('express');
+const sha1=require('sha1');
 const RESTOBJ = require ('../../database/collection/restaurant');
 const CLIENT = require('../../database/collection/client');
 var REST = RESTOBJ.REST;
 var KEYS = RESTOBJ.keys;
 const empty = require ('is-empty');
+const { json } = require('body-parser');
+const { update } = require('../../database/collection/client');
 const router = express.Router();
-router.get ('/',(req,res)=>{
+router.get ('/restaurant',(req,res)=>{
     var params = req.query;
     var SKIP = 0;
     var LIMIT = 10;
@@ -45,7 +48,7 @@ router.get ('/',(req,res)=>{
         res.status(200).json(docs);
     });     
     }); 
-router.post ('/',async(req,res)=>{
+router.post ('/restaurant',async(req,res)=>{
     console.log(req.body);
     var params = req.body;
      params["registerdate"]= new Date();
@@ -57,7 +60,7 @@ router.post ('/',async(req,res)=>{
         res.json({menssage:'error'});
     }
 });
-router.delete('/', (req, res, next) => {
+router.delete('/restaurant', (req, res, next) => {
     var params = req.query;
     if(params.id == null){
         res.status(300).json({
@@ -75,7 +78,7 @@ router.delete('/', (req, res, next) => {
         res.status(300).json(docs);
      }); 
 }); 
-router.patch('/', (req, res, next) => {
+router.patch('/restaurant', (req, res, next) => {
     var params = req.query;
     var data = req.body;
     if(params.id == null){
@@ -105,13 +108,33 @@ function checkkeys (key) {
     }
     return false;
 }
-router.put("/", (req,res)=>{
-    var datos = rep.boy;
-    console.log(datos);
+router.put("/restaurant", async(req,res)=>{
+    var params = req.query;
+    var bodydata = req.body;
+    if(params.id == null){
+        res.status(300).json({msn:"Id necesatio"});
+        return;
+    }
+    var allowkeylist = ['name',"street","telephone","fotolugar"];
+    var keys = Object.keys(bodydata);
+    var updateobjectdata={};
+    for(var i=0; i<keys.length;i++){
+            if (allowkeylist.indexOf(keys[i]) > -1){
+                updateobjectdata[keys[i]] = bodydata[keys[i]];
+        }
+    }
+    REST.update({_id: params.id},{$set:  updateobjectdata},(err,docs)=>{
+        if(err){
+            res.status(500).json({msn:"Existen problemas con la base de datos"});
+            return;
+        }
+        res.status(200).json(docs);
+    } );
 
 });
-router.post("/client", (req, res) => {
+router.post("/client", async(req, res) => {
     var client = req.body;
+    req.body.password= sha1 (req.body.password);
     client["registerdate"] = new Date();
     var cli = new CLIENT(client);
     cli.save((err, docs)=> {
@@ -129,5 +152,14 @@ router.post("/client", (req, res) => {
       return;
     })
   });
+  router.get('/client',(req,res)=>{
+      CLIENT.find({},(err,docs)=>{
+          if(!empty(docs)){
+              res.json(docs);
+          }else{
+              res.json({menssage:'no existe en la base de datos'});
+          }
+      });
+  })
 
 module.exports= router; 
