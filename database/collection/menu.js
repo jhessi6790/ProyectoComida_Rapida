@@ -3,11 +3,15 @@ var mon = require('mongoose');
 var Schema = mon.Schema;
 var menusSchema = new Schema({
   name : String,
-  price : Number,
+  precio : Number,
   description : String,
   registerdate : Date,
   picture: String,
-  idrestaurant: String
+  restaurant: {
+    type: Schema.Types.ObjectId,
+    ref: "restaurant"
+  }  
+  
 });
-var menus = mongoose.model("menus", menusSchema);
-module.exports = menus;
+var MENU = mongoose.model("menu", menusSchema);
+module.exports = MENU;
