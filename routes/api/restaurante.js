@@ -1,16 +1,11 @@
 const express = require('express');
-const sha1=require('sha1');
-const RESTOBJ = require ('../../database/collection/restaurant');
-const USER = require('../../database/collection/user');
-const MENU = require('../../database/collection/menu');
+const RESTOBJ = require ('../../database/collection/restaurante');
 var REST = RESTOBJ.REST;
 var KEYS = RESTOBJ.keys;
 const empty = require ('is-empty');
-const { json } = require('body-parser');
-const { update } = require('../../database/collection/user');
 const router = express.Router();
 //API RESTAURANT
-router.get ('/restaurant',(req,res)=>{
+router.get ('/',(req,res)=>{
     var params = req.query;
     var SKIP = 0;
     var LIMIT = 10;
@@ -50,7 +45,7 @@ router.get ('/restaurant',(req,res)=>{
         res.status(200).json(docs);
     });     
     }); 
-router.post ('/restaurant',async(req,res)=>{
+router.post ('/',async(req,res)=>{
     console.log(req.body);
     var params = req.body;
      params["registerdate"]= new Date();
@@ -62,7 +57,7 @@ router.post ('/restaurant',async(req,res)=>{
         res.json({menssage:'error'});
     }
 });
-router.delete('/restaurant', (req, res, next) => {
+router.delete('/', (req, res, next) => {
     var params = req.query;
     if(params.id == null){
         res.status(300).json({
@@ -80,7 +75,7 @@ router.delete('/restaurant', (req, res, next) => {
         res.status(300).json(docs);
      }); 
 }); 
-router.patch('/restaurant', (req, res, next) => {
+router.patch('/', (req, res, next) => {
     var params = req.query;
     var data = req.body;
     if(params.id == null){
@@ -110,7 +105,7 @@ function checkkeys (key) {
     }
     return false;
 }
-router.put("/restaurant", async(req,res)=>{
+router.put("/", async(req,res)=>{
     var params = req.query;
     var bodydata = req.body;
     if(params.id == null){
@@ -134,113 +129,4 @@ router.put("/restaurant", async(req,res)=>{
     } );
 
 });
-//API USER
-router.post("/user", async(req, res) => {
-    var client = req.body;
-    req.body.password= sha1 (req.body.password);
-    client["registerdate"] = new Date();
-    var cli = new USER(client);
-    cli.save((err, docs)=> {
-      if(err){
-          var errors = err.errors;
-          var keys = Object.keys(errors);
-          var msn = {};
-          for(var i=0;i< keys.length;i++){
-              msn[keys[i]]=errors[keys[i]].message;
-          }
-          res.status(200).json(msn);
-          return;
-      }
-      res.status(200).json(docs);
-      return;
-    })
-  });
-router.get('/user',(req,res)=>{
-      USER.find({},(err,docs)=>{
-          if(!empty(docs)){
-              res.json(docs);
-          }else{
-              res.json({menssage:'no existe en la base de datos'});
-          }
-      });
-  });
-router.patch("/user", (req, res) => {
-    if (req.query.id == null) {
-        res.status(300).json({
-             msn: "Error no existe id"
-        });
-        return;
-    }
-    var id = req.query.id;
-    var params = req.body;
-    USER.findOneAndUpdate({_id: id}, params, (err, docs) => {
-    res.status(200).json(docs);
-    });
-});
-router.delete("/user", async(req, res) => {
-    if (req.query.id == null) {
-    res.status(300).json({
-    msn: "Error no existe id"
-    });return;
-    }
-    var r = await USER.remove({_id: req.query.id});
-    res.status(300).json(r);
-    });
-//API MENUS
-router.get('/menu', function (req, res, next) {
-    MENU
-        .find()
-        .exec()
-        .then(docs => {
-            if (docs.length == 0) {
-                res.json({
-                    message: "No se encontro en la base de datos"
-                })
-            } else {
-                res.json(docs);
-            }
-        }).catch(err => {
-            res.json({
-                error: err
-            });
-        })
-
-});
-router.post('/menu', async(req,res)=>{
-    console.log(req.body);
-    let ins=new MENU(req.body);
-    let result=await ins.save();
-    if(!empty(result)){
-        res.json({message:'menu insertado en la bd'});
-
-    }else{
-        res.json({message:'error'});
-    }
-
-} );
-router.patch("/menu", (req, res) => {
-    if (req.query.id == null) {
-        res.status(300).json({
-             msn: "Error no existe id"
-        });
-        return;
-    }
-    var id = req.query.id;
-    var params = req.body;
-    MENU.findOneAndUpdate({_id: id}, params, (err, docs) => {
-    res.status(200).json(docs);
-    });
-});
-router.delete("/menu", async(req, res) => {
-    if (req.query.id == null) {
-        res.status(300).json({
-            msn: "Error no existe id"
-        });
-        return;
-    }
-    var r = await MENU.remove({_id: req.query.id});
-    res.status(300).json(r);
-});
-
-
 module.exports= router; 

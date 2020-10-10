@@ -11,7 +11,7 @@ const rest={
     Logo: String,
     fotolugar:String
 };
-const REST= mongoose.model('restaurant', rest);
+const REST= mongoose.model('restaurante', rest);
 module.exports = {REST, keys: ['name', 'propietario', 'street','telephone']};
 //module.exports = REST;
 
