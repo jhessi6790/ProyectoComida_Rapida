@@ -78,8 +78,17 @@ USER.findOne({email:req.body.email},(err,doc)=>{
         }else{
             res.json({message:'el email es incorrecto'});
         }
-
     });
 });
+router.get('/token',(req,res)=>{
+    const token = jwt.sign({
+        
+    },process.env.JWT_Key||'miClave',{
+        expiresIn:"1h"
+    });
+    res.json({
+        token:token
+    })
 
+});
 module.exports= router; 

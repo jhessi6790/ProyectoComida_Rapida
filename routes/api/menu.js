@@ -34,7 +34,7 @@ router.post('/', async(req,res)=>{
     }
 
 } );
-/*router.patch("/", (req, res) => {
+router.patch("/", (req, res) => {
     if (req.query.id == null) {
         res.status(300).json({
              msn: "Error no existe id"
@@ -46,24 +46,6 @@ router.post('/', async(req,res)=>{
     MENU.findOneAndUpdate({_id: id}, params, (err, docs) => {
     res.status(200).json(docs);
     });
-});*/
-router.patch('/', function (req, res, next) {
-    let idMenu = req.params.id;
-    const datos = {};
-    Object.keys(req.body).forEach((key) => {
-        datos[key] = req.body[key];
-    });
-    console.log(datos);
-    MENU.findByIdAndUpdate(idMenu, datos).exec()
-        .then(result => {
-            res.json({
-                message: "Datos actualizados"
-            });
-        }).catch(err => {
-            res.status(500).json({
-                error: err
-            })
-        });
 });
 router.delete('/', async(req, res) => {
     if (req.query.id == null) {
@@ -75,6 +57,57 @@ router.delete('/', async(req, res) => {
     var r = await MENU.remove({_id: req.query.id});
     res.status(300).json(r);
 });
+//foto
+/*const multer = require('multer');
+const fs=require('fs');
+const path=require('path');
+const { path } = require('../../app');
+const storage=multer.diskStorage({
+    destination:()=>{
+        try{
+            fs=statSync('./public/uploads');
+        }catch(e){
+            console.log(e);
+            fs.mkdirSync('./public/uploads/');
+        }
+        cb(null, './public/uploads/');
 
-
+    },
+    filename:(res, file,cb)=>{
+        cb(null, 'IMG'+Date.now()+path.extname(file.originalname));
+    }
+});
+const upload = multer({dest: 'uploads/'});
+router.post('/fotomenu', upload.array('img', 12), (req,res)=>{
+    let imgSet=[];
+    if(!empty(req.files)){
+        req.files.forEach(dat=>{
+            imgSet.push({
+            });
+        });
+    }
+    res.json({message:'esto esta funcionando'});
+})*/
+/*var storage = multer.diskStorage({
+    destination: "./public/restaurants",
+    filename: function (req, file, cb) {
+      console.log("-------------------------");
+      console.log(file);
+      cb(null, "IMG_" + Date.now() + ".jpg");
+    }
+  });
+  var storage_menu = multer.diskStorage({
+    destination: "./public/menu",
+    filename: function (req, file, cb) {
+      console.log("-------------------------");
+      console.log(file);
+      cb(null, "MENU_" + Date.now() + ".jpg");
+    }
+  });
+  var upload = multer({
+    storage: storage
+  }).single("img");
+  var upload_menu = multer({
+    storage: storage_menu
+  }).single("img");*/
 module.exports= router; 
