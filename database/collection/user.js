@@ -4,10 +4,10 @@ const userSchema = {
     type: String,
     required: [true, 'debe poner un nombre']
   },
-  ci: {
+   /*ci: {
     type: String,
     required: [true, 'Falta el CI']
-  }, 
+  },*/
   email:{
     type: String,
     required: [true, "email requerido"],
@@ -23,7 +23,8 @@ const userSchema = {
   fechaRegistro: {
     type: Date,
     default: Date.now()
-  }
+  },
+  tipo: String // cliente, dueño,cocinero
 };
 var USER = mongoose.model('user', userSchema);
 module.exports = USER;

@@ -1,13 +1,16 @@
 const mongoose = require('../connect');
-const Schema = mongoose.Schema;
-
+var mon = require('mongoose');
+var Schema = mon.Schema;
 const ordenSchema = Schema({
 
     cliente: {
         type: Schema.Types.ObjectId,
         ref: "user"
     },
-    lugarEnvio: [Number],
+    lugarEnvio: {
+        lat:String,
+        log: String
+    }, 
     restaurant: {
         type: Schema.Types.ObjectId,
         ref: "restaurante"
@@ -18,7 +21,7 @@ const ordenSchema = Schema({
         ref: "menu"
     }],
 
-    cantidad: [Number],
+    cantidad: Number,
     fechaRegistro: {
         type: Date,
         default: Date.now()

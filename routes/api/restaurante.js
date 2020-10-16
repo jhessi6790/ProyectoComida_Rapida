@@ -5,46 +5,15 @@ var KEYS = RESTOBJ.keys;
 const empty = require ('is-empty');
 const router = express.Router();
 //API RESTAURANT
-router.get ('/',(req,res)=>{
-    var params = req.query;
-    var SKIP = 0;
-    var LIMIT = 10;
-    var order = 1;
-    var filter = {};
-    if(params.skip){
-        SKIP = parseInt(params.skip);
-    }
-    if(params.limit){
-        LIMIT = parseInt(params.limit);
-    }
-    if(params.order){
-        order = parseInt(params.order);
-        console.log(order);
-    }
-    if(params.name){
-        filter["name"]= params.name;
-    }
-    if(params.id){
-        filter["_id"]= params.id;
-    }
-    if(params.nit){
-        filter["nit"]= params.nit;
-    }
-    if(params.search){
-        var regularexpresion = new RegExp(params.search, "g");
-        console.log(regularexpresion);
-        filter["name"]=regularexpresion;
-    }
-    REST.find(filter).skip(SKIP).limit(LIMIT).sort({name:order}).exec((err,docs)=>{
-        if(err){
-            res.status(200).json({
-                "msn":"Error en la base de datos"
-        });
-        return;
+router.get('/',(req,res)=>{
+    REST.find({},(err,docs)=>{
+        if(!empty(docs)){
+            res.json(docs);
+        }else{
+            res.json({menssage:'no existe en la base de datos'});
         }
-        res.status(200).json(docs);
-    });     
-    }); 
+    });
+});
 router.post ('/',async(req,res)=>{
     console.log(req.body);
     var params = req.body;

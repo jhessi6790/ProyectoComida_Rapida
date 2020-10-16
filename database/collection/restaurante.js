@@ -1,8 +1,13 @@
 const mongoose = require('../connect');
+var mon = require('mongoose');
+var Schema = mon.Schema;
 const rest={
     name: String, 
     nit: Number,
-    propietario: String,
+    propietario:{
+        type: Schema.Types.ObjectId,
+        ref: "user"
+    },
     street: String,
     telephone: Number,
     registerdate: Date,

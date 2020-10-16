@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const Orden = require('../../database/collection/orden');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 //GET
 router.get('/', function (req, res, next) {
     Orden.find().exec().then(docs => {
@@ -48,6 +50,4 @@ router.delete("/", async(req, res) => {
         res.json(r);
     }
 });
-
-
 module.exports = router;

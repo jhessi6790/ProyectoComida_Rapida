@@ -18,7 +18,7 @@ router.post('/', async(req, res) => {
           for(var i=0;i< keys.length;i++){
               msn[keys[i]]=errors[keys[i]].message;
           }
-          res.status(200).json(msn);
+          res.status(200).json({message:'usuario insertado en la bd'}); 
           return;
       }
       res.status(200).json(docs);
@@ -69,6 +69,9 @@ USER.findOne({email:req.body.email},(err,doc)=>{
             });
             res.json({
                 message:'Bienvenido',
+                idUser:doc._id,
+                name:doc.name,
+                admin:doc.admin, 
                 token:token
             });
             }else{
@@ -80,7 +83,7 @@ USER.findOne({email:req.body.email},(err,doc)=>{
         }
     });
 });
-router.get('/token',(req,res)=>{
+/*router.get('/token',(req,res)=>{
     const token = jwt.sign({
         
     },process.env.JWT_Key||'miClave',{
@@ -90,5 +93,5 @@ router.get('/token',(req,res)=>{
         token:token
     })
 
-});
+});*/
 module.exports= router; 
