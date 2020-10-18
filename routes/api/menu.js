@@ -1,8 +1,39 @@
 const express = require('express');
 const MENU = require('../../database/collection/menu');
 const empty = require ('is-empty');
+const multer = require('multer');
+const fs=require('fs');
+const path=require('path');
 const router = express.Router();
 //API MENUS
+const storage = multer.diskStorage({
+    destination: function (res, file, cb) {
+        try {
+            fs.statSync('./public/uploads');
+        } catch (e) {
+            fs.mkdirSync('./public/uploads');
+        }
+        cb(null, './public/uploads');
+    },
+    filename: (res, file, cb) => {
+
+        cb(null, 'IMG-' + Date.now() + path.extname(file.originalname))
+    }
+})
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+        return cb(null, true);
+    }
+    return cb(new Error('Solo se admiten imagenes png y jpg jpeg'));
+}
+
+const upload = multer({
+    storage: storage,
+    //fileFilter: fileFilter,
+    /*limits: {
+        fileSize: 1024 * 1024 * 5
+    }*/
+})
 router.get('/', function (req, res, next) {
     MENU
         .find()
@@ -22,18 +53,29 @@ router.get('/', function (req, res, next) {
         })
 
 });
-router.post('/', async(req,res)=>{
-    console.log(req.body);
-    let ins=new MENU(req.body);
-    let result=await ins.save();
-    if(!empty(result)){
-        res.json({message:'menu insertado en la bd'});
+router.post('/', upload.single("img"), function (req, res, next) {
+    let url = req.file.path.substr(6, req.file.path.length);
+    const datos = {
+        nombre: req.body.nombre,
+        foto: url,
+        descripcion: req.body.descripcion,
+        restaurant: req.body.restaurant,
+        precio: req.body.precio,
+    };
+    var modelMenu = new MENU(datos);
+    modelMenu.save()
+        .then(result => {
+            res.json({
+                message: "Menu insertado en la bd",
+                id: result._id
+            })
+        }).catch(err => {
+            res.status(500).json({
+                error: err
+            })
+        });
 
-    }else{
-        res.json({message:'error'});
-    }
-
-} );
+});
 router.patch("/", (req, res) => {
     if (req.query.id == null) {
         res.status(300).json({
@@ -58,9 +100,7 @@ router.delete('/', async(req, res) => {
     res.status(300).json(r);
 });
 //foto
-/*const multer = require('multer');
-const fs=require('fs');
-const path=require('path');
+/*
 const { path } = require('../../app');
 const storage=multer.diskStorage({
     destination:()=>{
