@@ -1,4 +1,5 @@
 const express = require('express');
+const MENU = require('../../database/collection/menu');
 const multer = require('multer');
 const fs=require('fs');
 const path=require('path');
@@ -29,8 +30,8 @@ const upload = multer({
     limits: {
         fileSize: 1024 * 1024 * 5
     }
-})
-const MENU = require('../../database/collection/menu');
+}).single('picture')
+
 router.get('/', function (req, res, next) {
     MENU
         .find()
@@ -50,28 +51,46 @@ router.get('/', function (req, res, next) {
         })
 
 });
-router.post('/', upload.single("img"), function (req, res, next) {
-let url = req.file.path.substr(6, req.file.path.length);
-    const datos = {
-        name: req.body.name,
-        precio:req.body.precio,
-        description: req.body.description,
-        picture: url,
-        restaurant: req.body.restaurant,
-        precio: req.body.precio,
-    };
-    var modelMenu = new MENU(datos);
-    modelMenu.save()
-        .then(result => {
-            res.json({
-                message: "Menu insertado en la bd",
-                id: result._id
-            })
-        }).catch(err => {
-            res.status(500).json({
-                error: err
-            })
-        });
+router.post('/', function (req, res, next) {
+    upload(req, res, (error) => {
+        if(error){
+          return res.status(500).json({
+            detalle: error,
+            "error" : error.message
+    
+          });
+        }else{
+          if (req.file == undefined) {
+                return res.status(400).json({
+                "error" : 'No se recibio la imagen'        
+                });
+            }
+            console.log(req.file);
+            let url = req.file.path.substr(6, req.file.path.length);
+            console.log(url);
+            const datos = {
+                name: req.body.name,
+                //telefono: req.body.telefono,
+                picture: url,
+                description: req.body.description,
+                restaurante: req.body.restaurante,
+                precio: req.body.precio,
+            };
+var modelMenu = new MENU(datos);
+            modelMenu.save()
+                .then(result => {
+                    res.json({
+                        message: "Menu insertado en la bd",
+                        id: result._id
+                    })
+                }).catch(err => {
+                    res.status(500).json({
+                        error: err
+                    })
+                });
+                
+                }
+    })
 });
 router.patch("/", (req, res) => {
     if (req.query.id == null) {
