@@ -1,6 +1,4 @@
 const express = require('express');
-const MENU = require('../../database/collection/menu');
-const empty = require ('is-empty');
 const multer = require('multer');
 const fs=require('fs');
 const path=require('path');
@@ -15,8 +13,7 @@ const storage = multer.diskStorage({
         }
         cb(null, './public/uploads');
     },
-    filename: (res, file, cb) => {
-
+    filename:(res, file, cb) => {
         cb(null, 'IMG-' + Date.now() + path.extname(file.originalname))
     }
 })
@@ -26,14 +23,14 @@ const fileFilter = (req, file, cb) => {
     }
     return cb(new Error('Solo se admiten imagenes png y jpg jpeg'));
 }
-
 const upload = multer({
     storage: storage,
-    //fileFilter: fileFilter,
-    /*limits: {
+    fileFilter: fileFilter,
+    limits: {
         fileSize: 1024 * 1024 * 5
-    }*/
+    }
 })
+const MENU = require('../../database/collection/menu');
 router.get('/', function (req, res, next) {
     MENU
         .find()
@@ -54,11 +51,12 @@ router.get('/', function (req, res, next) {
 
 });
 router.post('/', upload.single("img"), function (req, res, next) {
-    let url = req.file.path.substr(6, req.file.path.length);
+let url = req.file.path.substr(6, req.file.path.length);
     const datos = {
-        nombre: req.body.nombre,
-        foto: url,
-        descripcion: req.body.descripcion,
+        name: req.body.name,
+        precio:req.body.precio,
+        description: req.body.description,
+        picture: url,
         restaurant: req.body.restaurant,
         precio: req.body.precio,
     };
@@ -74,7 +72,6 @@ router.post('/', upload.single("img"), function (req, res, next) {
                 error: err
             })
         });
-
 });
 router.patch("/", (req, res) => {
     if (req.query.id == null) {
@@ -99,55 +96,4 @@ router.delete('/', async(req, res) => {
     var r = await MENU.remove({_id: req.query.id});
     res.status(300).json(r);
 });
-//foto
-/*
-const { path } = require('../../app');
-const storage=multer.diskStorage({
-    destination:()=>{
-        try{
-            fs=statSync('./public/uploads');
-        }catch(e){
-            console.log(e);
-            fs.mkdirSync('./public/uploads/');
-        }
-        cb(null, './public/uploads/');
-
-    },
-    filename:(res, file,cb)=>{
-        cb(null, 'IMG'+Date.now()+path.extname(file.originalname));
-    }
-});
-const upload = multer({dest: 'uploads/'});
-router.post('/fotomenu', upload.array('img', 12), (req,res)=>{
-    let imgSet=[];
-    if(!empty(req.files)){
-        req.files.forEach(dat=>{
-            imgSet.push({
-            });
-        });
-    }
-    res.json({message:'esto esta funcionando'});
-})*/
-/*var storage = multer.diskStorage({
-    destination: "./public/restaurants",
-    filename: function (req, file, cb) {
-      console.log("-------------------------");
-      console.log(file);
-      cb(null, "IMG_" + Date.now() + ".jpg");
-    }
-  });
-  var storage_menu = multer.diskStorage({
-    destination: "./public/menu",
-    filename: function (req, file, cb) {
-      console.log("-------------------------");
-      console.log(file);
-      cb(null, "MENU_" + Date.now() + ".jpg");
-    }
-  });
-  var upload = multer({
-    storage: storage
-  }).single("img");
-  var upload_menu = multer({
-    storage: storage_menu
-  }).single("img");*/
 module.exports= router; 

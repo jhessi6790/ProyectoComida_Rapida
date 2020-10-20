@@ -7,7 +7,7 @@ var menusSchema = new Schema({
   description : String,
   registerdate : Date,
   picture: String,
-  restaurant: {
+  restaurant:{
     type: Schema.Types.ObjectId,
     ref: "restaurant"
   }  
