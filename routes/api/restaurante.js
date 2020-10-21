@@ -6,6 +6,7 @@ const RESTOBJ = require ('../../database/collection/restaurante');
 var REST = RESTOBJ.REST;
 var KEYS = RESTOBJ.keys;
 const empty = require ('is-empty');
+const { UpgradeRequired } = require('http-errors');
 const router = express.Router();
 //Fotos
 const storage = multer.diskStorage({
@@ -33,10 +34,10 @@ const upload = multer({
     limits: {
         fileSize: 1024 * 1024 * 5
     }
-}).fields[
-    { name: 'logo', maxCount: 2 },
-    { name: 'fotolugar', maxCount: 5 }
-  ]
+})/*.fields[
+    { name: 'logo'},
+    { name: 'fotolugar'}
+  ];*/
 //API RESTAURANT
 router.get('/',(req,res)=>{
     REST.find({},(err,docs)=>{
@@ -48,22 +49,22 @@ router.get('/',(req,res)=>{
     });
 });
 //POST CON LA FOTO
-let dobleinput= upload.fields({name:'logo',maxCount:2},{name:'fotolugar', maxCount:5})
-router.post('/', dobleinput,function(req, res,next){
-   // upload.(req, res, (error) => {
+let dobleinput= upload.fields([{name:'logo',maxCount:2},{name:'fotolugar', maxCount:5}])
+router.post('/', dobleinput, function(req, res,next){
+    //upload.fields(req, res, (error) => {
         if(error){
           return res.status(500).json({
             detalle: error,
             "error" : error.message,
           });
         }else{
-          if (req.file == undefined) {
+          if (req.fields == undefined) {
                 return res.status(400).json({
                 "error" : 'No se recibio las imagenes'        
                 });
             }
-            console.log(req.file);
-            let url = req.file.path.substr(6, req.file.path.length);
+            console.log(req.fields);
+            let url = req.fields.path.substr(6, req.fields.path.length);
             console.log(url);
             const datos = {
                 name: req.body.name,
