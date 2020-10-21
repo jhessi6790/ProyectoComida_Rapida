@@ -33,8 +33,10 @@ const upload = multer({
     limits: {
         fileSize: 1024 * 1024 * 5
     }
-}).array['logo','fotolugar']
-//.upload.array['logo','fotolugar'];//.upload.fields['logo','fotolugar']
+}).fields[
+    { name: 'logo', maxCount: 2 },
+    { name: 'fotolugar', maxCount: 5 }
+  ]
 //API RESTAURANT
 router.get('/',(req,res)=>{
     REST.find({},(err,docs)=>{
@@ -45,14 +47,14 @@ router.get('/',(req,res)=>{
         }
     });
 });
-//POST MAS FOTO
-router.post('/', upload.array('logo','fotolugar',12),(req, res,) =>{
+//POST CON LA FOTO
+let dobleinput= upload.fields({name:'logo',maxCount:2},{name:'fotolugar', maxCount:5})
+router.post('/', dobleinput,function(req, res,next){
    // upload.(req, res, (error) => {
         if(error){
           return res.status(500).json({
             detalle: error,
-            "error" : error.message
-    
+            "error" : error.message,
           });
         }else{
           if (req.file == undefined) {

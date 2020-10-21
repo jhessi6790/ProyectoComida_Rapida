@@ -32,7 +32,7 @@ const upload = multer({
     }
 }).single('picture')
 
-/*router.get('/', function (req, res, next) {
+router.get('/', function (req, res, next) {
     MENU
         .find()
         .exec()
@@ -50,8 +50,8 @@ const upload = multer({
             });
         })
 
-});*/
-router.get('/',(req,res)=>{
+});
+/*router.get('/',(req,res)=>{
     MENU.find({},(err,docs)=>{
         if(!empty(docs)){
             res.json(docs);
@@ -59,7 +59,7 @@ router.get('/',(req,res)=>{
             res.json({menssage:'no existe en la base de datos'});
         }
     });
-});
+});*/
 router.post('/', function (req, res, next) {
     upload(req, res, (error) => {
         if(error){
