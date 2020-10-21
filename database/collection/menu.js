@@ -11,7 +11,6 @@ var menusSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "restaurant"
   }  
-  
 });
 var MENU = mongoose.model("menu", menusSchema);
 module.exports = MENU;

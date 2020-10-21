@@ -32,7 +32,7 @@ const upload = multer({
     }
 }).single('picture')
 
-router.get('/', function (req, res, next) {
+/*router.get('/', function (req, res, next) {
     MENU
         .find()
         .exec()
@@ -50,6 +50,15 @@ router.get('/', function (req, res, next) {
             });
         })
 
+});*/
+router.get('/',(req,res)=>{
+    MENU.find({},(err,docs)=>{
+        if(!empty(docs)){
+            res.json(docs);
+        }else{
+            res.json({menssage:'no existe en la base de datos'});
+        }
+    });
 });
 router.post('/', function (req, res, next) {
     upload(req, res, (error) => {

@@ -1,9 +1,40 @@
 const express = require('express');
+const multer = require('multer');
+const fs=require('fs');
+const path=require('path');
 const RESTOBJ = require ('../../database/collection/restaurante');
 var REST = RESTOBJ.REST;
 var KEYS = RESTOBJ.keys;
 const empty = require ('is-empty');
 const router = express.Router();
+//Fotos
+const storage = multer.diskStorage({
+    destination: function (res, file, cb) {
+        try {
+            fs.statSync('./public/uploads');
+        } catch (e) {
+            fs.mkdirSync('./public/uploads');
+        }
+        cb(null, './public/uploads');
+    },
+    filename:(res, file, cb) => {
+        cb(null, 'IMG-' + Date.now() + path.extname(file.originalname))
+    }
+})
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+        return cb(null, true);
+    }
+    return cb(new Error('Solo se admiten imagenes png y jpg jpeg'));
+}
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    }
+}).array['logo','fotolugar']
+//.upload.array['logo','fotolugar'];//.upload.fields['logo','fotolugar']
 //API RESTAURANT
 router.get('/',(req,res)=>{
     REST.find({},(err,docs)=>{
@@ -14,7 +45,50 @@ router.get('/',(req,res)=>{
         }
     });
 });
-router.post ('/',async(req,res)=>{
+//POST MAS FOTO
+router.post('/', upload.array('logo','fotolugar',12),(req, res,) =>{
+   // upload.(req, res, (error) => {
+        if(error){
+          return res.status(500).json({
+            detalle: error,
+            "error" : error.message
+    
+          });
+        }else{
+          if (req.file == undefined) {
+                return res.status(400).json({
+                "error" : 'No se recibio las imagenes'        
+                });
+            }
+            console.log(req.file);
+            let url = req.file.path.substr(6, req.file.path.length);
+            console.log(url);
+            const datos = {
+                name: req.body.name,
+                nit: req.body.nit,
+                propietario:req.body.propietario,
+                street:req.body.street,
+                telephone:req.body.telephone,
+                Logo:url,
+                fotolugar:url,
+            };
+var modelRestaurante = new REST(datos);
+            modelRestaurante.save()
+                .then(result => {
+                    res.json({
+                        message: "Restaurante insertado en la bd",
+                        id: result._id
+                    })
+                }).catch(err => {
+                    res.status(500).json({
+                        error: err
+                    })
+                });
+                
+                }
+    });
+//POST
+/*router.post ('/',async(req,res)=>{
     console.log(req.body);
     var params = req.body;
      params["registerdate"]= new Date();
@@ -25,7 +99,7 @@ router.post ('/',async(req,res)=>{
     }else{
         res.json({menssage:'error'});
     }
-});
+});*/
 router.delete('/', (req, res, next) => {
     var params = req.query;
     if(params.id == null){
