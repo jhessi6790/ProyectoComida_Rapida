@@ -38,10 +38,10 @@ router.get('/', function (req, res, next) {
 router.post('/', function (req, res, next) {
     const datos = {
         cliente: req.body.cliente,
-        lugarEnvioLat:req.body.lat,
-        lugarEnvioLog:req.body.log,
+        lugarEnvioLat:req.body.lugarEnvioLat,
+        lugarEnvioLog:req.body.lugarEnvioLog,
         restaurant: req.body.restaurant,
-        menu: req.body.menu,
+        menus: req.body.menus,
     };
 
     let precios = req.body.precios;
@@ -403,7 +403,7 @@ router.get('/maps/:id', function (req, res, next) {
             });
             console.log(error);
         });
-router.patch("/", (req, res) => {
+router.patch('/', (req, res) => {
     if (req.query.id == null) {
         res.status(300).json({
              msn: "Error no existe id"
