@@ -4,8 +4,8 @@ const Orden = require('../../database/collection/orden');
 const PDFDocument = require('pdfkit');
 const fs=require('fs');
 var me=require("../../database/collection/menu");
-const StaticMaps = require("staticmaps");
-var nodemailer = require('nodemailer'); // email sender function
+const StaticMaps = require("staticmaps"); //crear imagenes de mapas con marcadores
+var nodemailer = require('nodemailer'); // enviar correos electronicos de manera sencilla
 const { collection } = require('../../database/collection/orden');
 //GET
 
@@ -76,8 +76,8 @@ router.post('/', function (req, res, next) {
 });
 var doc = {
     "lugarEnvio": [
-        -19.579398,
-        -65.763501
+        -19.579398, //lat 
+        -65.763501 //log
     ],
     "menus": [
         {
@@ -242,8 +242,8 @@ router.get('/factura/:id', function (req, res, next) {
                 link https://myaccount.google.com/lesssecureapps
             */ 
             
-            /*let config = JSON.parse(fs.readFileSync("config.json"));
-            var transporter = nodemailer.createTransport({
+            //let config = JSON.parse(fs.readFileSync("config.json"));
+            /*var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 secure: false,
                 port: 25,
@@ -255,21 +255,38 @@ router.get('/factura/:id', function (req, res, next) {
                     rejectUnauthorized: false
                 }
             });
+             /*
+                Ejemplo con ethereal.email
+                es directo y gratis (fake smtp server) no hace envio reales
+                te da un usuari y pass aleatorio 
+                link https://ethereal.email/
+            */             
             
+           const transporter = nodemailer.createTransport({
+            host: 'smtp.ethereal.email',
+            port: 587,
+            secure: false, 
+            auth: {
+                user: 'wilfrid.brekke@ethereal.email',
+                pass: 'U4h7dntU81nRb5wPK4'
+            }
+        });
+        
+        /*
             /*
                 Ejemplo con mailtrap.io 
                 hay que registrase , es gratis (fake smtp server) no hace envio reales
                 link https://mailtrap.io/i
             */ 
         
-			var transporter = nodemailer.createTransport({
+			/*var transporter = nodemailer.createTransport({
 				host: "smtp.mailtrap.io",
 				port: 2525,
 				auth: {
 				  user: "b991ab4f04b454",
 				  pass: "406d5cba96a12c"
                 }
-			  });
+			  });*/
             
 var mailOptions = {
 from: 'Api Rest Store!',
@@ -291,26 +308,26 @@ if (error) {
 } else {
     let idOrden = req.params.id;
         const options = {
-            width: 600,
+            width: 600,//controlando alto y ancho
             height: 800
         };
     const map = new StaticMaps(options);
     const marker = {
-        img: `./public/images/map-marker-icon.png`, // can also be a URL
-            offsetX: 24,
-            offsetY: 48,
-            width: 48,
-            height: 48,
-            coord : [doc.lugarEnvio[1],doc.lugarEnvio[0]]//las cordinadas son al revez
+        img: `./public/images/map-marker-icon.png`, // definimos la imagen can also be a URL
+            offsetX: 24, //distnacia 24 de su centro 
+            offsetY: 48, // el largo 
+            width: 48, //del marcador
+            height: 48, //
+            coord : [doc.lugarEnvio[1],doc.lugarEnvio[0]]//las coordenas son al revez
         };
-map.addMarker(marker);
-map.render()
-.then(() => map.image.save('./temp/map-' + idOrden + '.png'))
+map.addMarker(marker);//añadimos el marcador 
+map.render(/*cordenadas, zoom */) //renderizamos y se crea la imagen
+.then(() => map.image.save('./temp/map-' + idOrden + '.png')) //uarda la imgane en la carpeta temp 
 .then(() => {
 console.log('imagen creada de manera exitosa!'); 
 pdfg = new PDFDocument;
 let writeStreamG = fs.createWriteStream('./temp/guia-' + idOrden + '.pdf');
-    pdfg.pipe(writeStreamG);
+    pdfg.pipe(writeStreamG); //crear un documento para poner ahi la imagen seria la guia
                             
     pdfg.fontSize(20)
     .text('Orden de Entrega: ' + idOrden, 100, 100)
@@ -321,20 +338,20 @@ let writeStreamG = fs.createWriteStream('./temp/guia-' + idOrden + '.pdf');
      align: 'left'
 })
     .moveDown()
-    pdfg.image('./temp/map-' + idOrden + '.png', pdfg.x, pdfg.y, {
+    pdfg.image('./temp/map-' + idOrden + '.png', pdfg.x, pdfg.y, { //sacamos la imgane del pedf 
     width: 450,
     height: 600
      })
      pdfg.end()
 
     writeStreamG.on('finish', function () {
-    res.status(200).download('./temp/guia-' + idOrden + '.pdf');
+    res.status(200).download('./temp/guia-' + idOrden + '.pdf'); //una ves que se construya lo mandamos a descargar 
     });
     console.log('dpf guia hecho!');
-     /*res.json({
+    res.json({
     message: "Email enviado de manera exitosa!",
     info: info
-    });*/                        
+    });                     
     })        
     .catch(error => {
          res.json({
@@ -359,7 +376,7 @@ let writeStreamG = fs.createWriteStream('./temp/guia-' + idOrden + '.pdf');
 router.get('/maps/:id', function (req, res, next) {
     let idOrden = req.params.id;
     const options = {
-        width: 600,
+        width: 600,//definimos el alto y ancho
         height: 800
       };
       const map = new StaticMaps(options);
