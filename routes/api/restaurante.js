@@ -34,12 +34,11 @@ const upload = multer({
     limits: {
         fileSize: 1024 * 1024 * 5
     }
-})/*.fields[
-    { name: 'logo'},
-    { name: 'fotolugar'}
-  ];*/
+}).single('fotolugar');
 //API RESTAURANT
 router.get('/',(req,res)=>{
+    //REST.findById(req.params.id).populate('propietario').exec()
+        //.then(doc =>{
     REST.find({},(err,docs)=>{
         if(!empty(docs)){
             res.json(docs);
@@ -49,31 +48,33 @@ router.get('/',(req,res)=>{
     });
 });
 //POST CON LA FOTO
-let dobleinput= upload.fields([{name:'logo',maxCount:2},{name:'fotolugar', maxCount:5}])
-router.post('/', dobleinput, function(req, res,next){
-    //upload.fields(req, res, (error) => {
+//let dobleinput= upload.fields([{name:'logo',maxCount:2},{name:'fotolugar', maxCount:5}])
+router.post('/', function (req, res, next) {
+    upload(req, res, (error) => {
         if(error){
           return res.status(500).json({
             detalle: error,
-            "error" : error.message,
+            "error" : error.message
+    
           });
         }else{
-          if (req.fields == undefined) {
+          if (req.file == undefined) {
                 return res.status(400).json({
-                "error" : 'No se recibio las imagenes'        
+                "error" : 'No se recibio la imagen'        
                 });
             }
-            console.log(req.fields);
-            let url = req.fields.path.substr(6, req.fields.path.length);
+            console.log(req.file);
+            let url = req.file.path.substr(6, req.file.path.length);
             console.log(url);
             const datos = {
                 name: req.body.name,
                 nit: req.body.nit,
-                propietario:req.body.propietario,
-                street:req.body.street,
-                telephone:req.body.telephone,
-                Logo:url,
-                fotolugar:url,
+                propietario: req.body.propietario,
+                street: req.body.street,
+                telephone: req.body.telephone,
+                Log: req.body.Log,
+                Lat: req.body.Lat,
+                fotolugar: url,
             };
 var modelRestaurante = new REST(datos);
             modelRestaurante.save()
@@ -89,7 +90,8 @@ var modelRestaurante = new REST(datos);
                 });
                 
                 }
-    });
+    })
+});
 //POST
 /*router.post ('/',async(req,res)=>{
     console.log(req.body);
