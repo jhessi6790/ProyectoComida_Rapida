@@ -3,6 +3,7 @@ const MENU = require('../../database/collection/menu');
 const multer = require('multer');
 const fs=require('fs');
 const path=require('path');
+const empty = require ('is-empty');
 const router = express.Router();
 //API MENUS
 const storage = multer.diskStorage({
@@ -32,7 +33,7 @@ const upload = multer({
     }
 }).single('picture')
 
-router.get('/', function (req, res, next) {
+/*router.get('/', function (req, res, next) {
     MENU
         .find()
         .exec()
@@ -50,8 +51,8 @@ router.get('/', function (req, res, next) {
             });
         })
 
-});
-/*router.get('/',(req,res)=>{
+});*/
+router.get('/',(req,res)=>{
     MENU.find({},(err,docs)=>{
         if(!empty(docs)){
             res.json(docs);
@@ -59,7 +60,7 @@ router.get('/', function (req, res, next) {
             res.json({menssage:'no existe en la base de datos'});
         }
     });
-});*/
+});
 router.post('/', function (req, res, next) {
     upload(req, res, (error) => {
         if(error){

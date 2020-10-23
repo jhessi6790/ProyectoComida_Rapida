@@ -74,7 +74,7 @@ router.post('/', function (req, res, next) {
         });
 
 });
-var doc = {
+/*var doc = {
     "lugarEnvio": [
         -19.579398, //lat 
         -65.763501 //log
@@ -128,10 +128,10 @@ var doc = {
     },
     "pagoTotal": 120,
     "__v": 0
-}
+}*/
 router.get('/factura/:id', function (req, res, next) {
-    /*Orden.findById(req.params.id).populate('restaurant').populate('menus').populate('cliente').exec()
-        .then(doc => {*/
+    Orden.findById(req.params.id).populate('restaurant').populate('menus').populate('cliente').exec()
+        .then(doc => {
             //Create a document 
             pdf = new PDFDocument
             let idOrden = req.params.id;
@@ -152,11 +152,11 @@ router.get('/factura/:id', function (req, res, next) {
                 width: 412,
                 align: 'left'
             })
-            pdf.moveDown()
+            /*pdf.moveDown()
             pdf.text('Cedula de Indentidad ' + doc.cliente.ci, {
                 width: 412,
                 align: 'left'
-            })
+            })*/
             pdf.moveDown()
             //pdf.rect(pdf.x, 0, 410, pdf.y).stroke()
 
@@ -166,6 +166,7 @@ router.get('/factura/:id', function (req, res, next) {
                 align: 'left'
             })
             pdf.moveDown()
+            
 
             pdf.text('DETALLE DE PEDIDO', {
                 width: 412,
@@ -191,6 +192,7 @@ router.get('/factura/:id', function (req, res, next) {
                 width: 412,
                 align: 'left'
             })
+            
             pdf.moveDown()
             //image
             /* pdf.image('out2.png', pdf.x, pdf.y, {
@@ -209,11 +211,14 @@ router.get('/factura/:id', function (req, res, next) {
 
             pdf.moveDown()
             //console.log(pdf.x, pdf.y);
+            
             pdf.rect(pdf.x - 5, pdf.y-5, 410, doc.menus.length * 22).stroke()
-
+            
             for (let index = 0; index < doc.menus.length; index++) {
+                
                 //pdf.rect(pdf.x, pdf.y, 410, 15).stroke()
-                pdf.text(doc.menus[index].nombre + '\n' + doc.menus[index].precio + '\n' + doc.cantidad[index], {
+                pdf.text(doc.menus[index].name + '\n' + doc.menus[index].precio + '\n' + doc.cantidad[index], {
+                    
                     width: 312,
                     align: 'left',
                     height: 15,
@@ -221,6 +226,7 @@ router.get('/factura/:id', function (req, res, next) {
                 })
                 pdf.moveDown()
             }
+            
             pdf.text('Total :  ' + doc.pagoTotal, {
                 width: 412,
                 align: 'right'
@@ -262,7 +268,7 @@ router.get('/factura/:id', function (req, res, next) {
                 link https://ethereal.email/
             */             
             
-           const transporter = nodemailer.createTransport({
+           /*const transporter = nodemailer.createTransport({
             host: 'smtp.ethereal.email',
             port: 587,
             secure: false, 
@@ -279,14 +285,14 @@ router.get('/factura/:id', function (req, res, next) {
                 link https://mailtrap.io/i
             */ 
         
-			/*var transporter = nodemailer.createTransport({
+			var transporter = nodemailer.createTransport({
 				host: "smtp.mailtrap.io",
 				port: 2525,
 				auth: {
 				  user: "b991ab4f04b454",
 				  pass: "406d5cba96a12c"
                 }
-			  });*/
+			  });
             
 var mailOptions = {
 from: 'Api Rest Store!',
@@ -318,8 +324,9 @@ if (error) {
             offsetY: 48, // el largo 
             width: 48, //del marcador
             height: 48, //
-            coord : [doc.lugarEnvio[1],doc.lugarEnvio[0]]//las coordenas son al revez
+            coord : [doc.lugarEnvioLog,doc.lugarEnvioLat]//las coordenas son al revez
         };
+        console.log(doc.lugarEnvioLog);
 map.addMarker(marker);//añadimos el marcador 
 map.render(/*cordenadas, zoom */) //renderizamos y se crea la imagen
 .then(() => map.image.save('./temp/map-' + idOrden + '.png')) //uarda la imgane en la carpeta temp 
@@ -348,10 +355,10 @@ let writeStreamG = fs.createWriteStream('./temp/guia-' + idOrden + '.pdf');
     res.status(200).download('./temp/guia-' + idOrden + '.pdf'); //una ves que se construya lo mandamos a descargar 
     });
     console.log('dpf guia hecho!');
-    res.json({
+    /*res.json({
     message: "Email enviado de manera exitosa!",
     info: info
-    });                     
+    });    */                 
     })        
     .catch(error => {
          res.json({
@@ -363,16 +370,15 @@ let writeStreamG = fs.createWriteStream('./temp/guia-' + idOrden + '.pdf');
 });
 
  });
-/*
+
         }).catch(err => {
             res.status(500).json({
                 error: err || "error"
             });
-        });*/
+        });
 
 
     //doc.pipe(res.status(201));
-});
 router.get('/maps/:id', function (req, res, next) {
     let idOrden = req.params.id;
     const options = {
@@ -425,6 +431,7 @@ router.delete("/", async(req, res) => {
         var r = await Orden.remove({_id: req.query.id});
         res.json(r);
     }
+});
 });
 });
 module.exports= router;

@@ -18,7 +18,8 @@ var menusSchema = new Schema({
   picture: String,
   restaurant:{
     type: Schema.Types.ObjectId,
-    ref: "restaurant"
+    ref: "restaurante",
+    required: [true, 'debe poner el id del  reataurant']
   }  
 });
 var MENU = mongoose.model('menu', menusSchema);

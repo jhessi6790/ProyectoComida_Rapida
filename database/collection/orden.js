@@ -23,15 +23,12 @@ const ordenSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: "restaurante"
     },
-    menus:{
+    menus:[{
         type: Schema.Types.ObjectId,
         ref: "menu",
-        required: 'Menu requerido'
-        //required: [true, "menu requerido"],
-        //type: Schema.Types.ObjectId,
-        //ref: "menu"
-    } ,
-    cantidad: Number,
+        required: [true, "menu requerido"],
+    }],
+    cantidad: [Number],
     fechaRegistro: {
         type: Date,
         default: Date.now()
