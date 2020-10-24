@@ -13,7 +13,6 @@ const rest={
     propietario:{
         type: Schema.Types.ObjectId,
         ref: "user"
-
     },
     street:{
         type: String,
@@ -26,7 +25,7 @@ const rest={
     registerdate: Date,
     Log: String,
     Lat: String,
-    //Logo: String,
+    //Logo: String,*/
     fotolugar:String
 };
 const REST= mongoose.model('restaurante', rest);

@@ -24,7 +24,7 @@ router.post('/', async(req, res) => {
       res.status(200).json(docs);
       return;
     })
-  });
+  });/*
 router.get('/',(req,res)=>{
       USER.find({},(err,docs)=>{
           if(!empty(docs)){

@@ -33,7 +33,7 @@ const upload = multer({
     }
 }).single('picture')
 
-/*router.get('/', function (req, res, next) {
+router.get('/', function (req, res, next) {
     MENU
         .find()
         .exec()
@@ -51,8 +51,8 @@ const upload = multer({
             });
         })
 
-});*/
-router.get('/',(req,res)=>{
+});
+/*router.get('/',(req,res)=>{
     MENU.find({},(err,docs)=>{
         if(!empty(docs)){
             res.json(docs);
@@ -60,7 +60,7 @@ router.get('/',(req,res)=>{
             res.json({menssage:'no existe en la base de datos'});
         }
     });
-});
+});*/
 router.post('/', function (req, res, next) {
     upload(req, res, (error) => {
         if(error){
@@ -101,7 +101,19 @@ var modelMenu = new MENU(datos);
                 
                 }
     })
-});
+});/*
+router.post ('/',async(req,res)=>{
+    console.log(req.body);
+    var params = req.body;
+     params["registerdate"]= new Date();
+    let ins = new MENU(req.body);
+    let result= await ins.save();
+    if(!empty(result)){
+        res.json({menssage: 'restaurante creado en la bd'});
+    }else{
+        res.json({menssage:'error'});
+    }
+});*/
 router.patch("/", (req, res) => {
     if (req.query.id == null) {
         res.status(300).json({

@@ -15,12 +15,12 @@ var menusSchema = new Schema({
     required: [true, 'debe poner la descripcion']
   },
   registerdate : Date,
-  picture: String,
+  /*picture: String,
   restaurant:{
     type: Schema.Types.ObjectId,
     ref: "restaurante",
     required: [true, 'debe poner el id del  reataurant']
-  }  
+  } */ 
 });
 var MENU = mongoose.model('menu', menusSchema);
 module.exports = MENU;

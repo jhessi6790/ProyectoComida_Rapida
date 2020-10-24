@@ -20,8 +20,8 @@ const userSchema = {
     type: Date,
     default: Date.now()
   },
-  avatar: String,
-  tipo: String // cliente, dueño,cocinero
+  /*avatar: String,
+  tipo: String // cliente, dueño,cocinero*/
 };
 var USER = mongoose.model('user', userSchema);
 module.exports = USER;

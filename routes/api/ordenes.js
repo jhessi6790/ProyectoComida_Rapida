@@ -260,7 +260,19 @@ router.get('/factura/:id', function (req, res, next) {
                 tls: {
                     rejectUnauthorized: false
                 }
-            });
+            });*/
+            /*var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                secure: false,
+                port: 25,
+                auth: {
+                    user: 'sis838karen@gmail.com', //el correo ,del que se enviara el email
+                    pass: 'gestioncalidad2020' //aqui va la contraseña de su correo
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });*/
              /*
                 Ejemplo con ethereal.email
                 es directo y gratis (fake smtp server) no hace envio reales
@@ -379,7 +391,7 @@ let writeStreamG = fs.createWriteStream('./temp/guia-' + idOrden + '.pdf');
 
 
     //doc.pipe(res.status(201));
-router.get('/maps/:id', function (req, res, next) {
+/*router.get('/maps/:id', function (req, res, next) {
     let idOrden = req.params.id;
     const options = {
         width: 600,//definimos el alto y ancho
@@ -432,6 +444,6 @@ router.delete("/", async(req, res) => {
         res.json(r);
     }
 });
-});
+});*/
 });
 module.exports= router;
